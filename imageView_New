@@ -1,0 +1,141 @@
+@{
+Layout= null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Quote</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#Text").val($("#Text").val() + "\n__________\narguly.com");
+        });
+        function FormSubmittedSuccess(e) { //function CouponSubmitted(data) in the question
+                
+            var srcval = "data:image/png;base64," + e;
+            $('#CaptchaImg').attr("src", srcval);
+            $('#CaptchaImg').removeAttr("href");
+           
+            $("#CaptchaImg").show();
+            $("#sharelbl").show();
+            sharelbl
+            //alert(json.success);
+        }
+        function upperMe() {
+            if (document.getElementById('CheckBox').checked) {
+                document.getElementById("Text").value = document.getElementById("Text").value.toUpperCase();
+
+            } else {
+                document.getElementById("Text").value = document.getElementById("Text").value.toLowerCase();
+
+            }
+        }
+        function Signature() {
+            if (document.getElementById('default-Signature').checked) {
+                console.log(document.getElementById("Text").value);
+                if (document.getElementById("Text").value.indexOf("\n__________\narguly.com") == -1 || document.getElementById("Text").value.indexOf("\n__________\nARGULY.COM") == -1) {
+                    $("#Text").val($("#Text").val() + "\n__________\narguly.com");
+                }
+
+            } else {
+                if (document.getElementById("Text").value.indexOf("\n__________\nARGULY.COM") != -1 || document.getElementById("Text").value.indexOf("\n__________\narguly.com") != -1) {
+                    document.getElementById("Text").value = document.getElementById("Text").value.replace("\n__________\narguly.com", "");
+                    
+                    document.getElementById("Text").value = document.getElementById("Text").value.replace("\n__________\nARGULY.COM", "");
+
+                 
+                }
+            }
+        }
+    </script>
+</head>
+<body style="background-color: white ;">
+
+    <div class="container" style="background-color: lightgrey;">
+        <h2>Quote Image Generator</h2>
+       
+        @using (Ajax.BeginForm("ImageGenerator", null, new AjaxOptions
+        {
+            OnSuccess = "FormSubmittedSuccess",
+            HttpMethod = "Get"
+        }, new { @class = "form-horizontal" }))
+        {
+                <div class="form-group">
+                    <label class="control-label col-xs-2" for="email">Text:</label>
+                    <div class="col-xs-6">
+                        @Html.TextArea("Text", new {@id= "Text", @rows = "8", @Required = true, @class = "form-control" })
+                    </div>
+                    <label class="control-label col-xs-2" for="email">@Html.CheckBox("Upper", false, new { @id = "CheckBox", @onchange = "upperMe()" })Upper Case </label>
+                    <label class="control-label col-xs-2" for="email">@Html.CheckBox("Upper", true, new { @id = "default-Signature", @onchange = "Signature()" })Default Signature </label>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-xs-2" for="email">Width:</label>
+                    <div class="col-xs-4">
+                        <input type="text" class="form-control" value="500" id="imageSizeWidth" placeholder="Enter Width" name="imageSizeWidth">
+                    </div>
+                    <label class="control-label col-xs-2" for="email">Height:</label>
+                    <div class="col-xs-4">
+                        <input type="text" class="form-control" value="400" id="imageSizeHeight" placeholder="Enter Height" name="imageSizeHeight">
+                    </div>
+                </div>
+                <div class="form-group">
+
+                    <label class="control-label col-xs-2" for="FontStyle">Font Style:</label>
+                    <div class="col-xs-4">
+                        @Html.DropDownList("FontStyle", new SelectList(ViewBag.FontFamilies, "Calibri"))
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2" for="FontSize">Font Size:</label>
+                    <div class="col-xs-4">
+                        <input type="text" class="form-control" value="30" id="FontSize" placeholder="Enter FontSize" name="FontSize">
+
+                    </div>
+                    <label class="control-label col-xs-2" for="email" style="color:">Wrap Char Length:</label>
+                    <div class="col-xs-4">
+                        <input type="text" class="form-control" value="" id="WrapCharLength" placeholder="Enter WrapCharLength" name="WrapCharLength">
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2" for="email">Text Color:</label>
+                    <div class="col-xs-4">
+                        @Html.DropDownList("TextColor", new SelectList(((List<System.Drawing.Color>)ViewBag.ColorList),"Name","Name","White"), new { @class = "form-control" })
+                    </div>
+                    <label class="control-label col-xs-2" for="backColor">Back Color:</label>
+                    <div class="col-xs-4">
+                        @Html.DropDownList("BackColor", new SelectList(ViewBag.ColorList, "Name", "Name", "Black"), new { @class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-xs-offset-2 col-xs-4">
+                        <button type="submit" class="btn btn-primary">Preview</button>
+                    </div>
+                    <div class="col-xs-offset-2 col-xs-4">
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2" id="sharelbl" style="display:none" for="email">Share:</label>
+                    <div class="col-xs-10">
+
+                        <img id="CaptchaImg" alt="Captcha" class="img-rounded img-responsive" style="display:none"
+                             src="" />
+                    </div>
+                </div>
+        }
+
+                <div>
+                    <br />
+                </div>
+            </div>
+
+</body>
+</html>
